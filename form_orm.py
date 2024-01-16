@@ -1,11 +1,10 @@
-# forms_orm.py
+from custom_exception import FormNotFoundError, QuestionNotFoundError
 from flask import jsonify
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from database import Form, Question, Response, Answer, question_form_association
-from custom_exception import FormNotFoundError, QuestionNotFoundError
+from utils import DB_URL
 
-DB_URL = "postgresql://postgres:12345@localhost:5432/postgres"
 engine = create_engine(DB_URL, echo=True)
 
 def create_response(form_id, response_id, questions_data):
@@ -29,7 +28,7 @@ def create_response(form_id, response_id, questions_data):
             # Query the database to get the question
             question = session.query(Question).get(question_id)
             
-            # Check if the question exists
+            # Check if the question do not exists
             if not question:    
                 raise QuestionNotFoundError("Invalid question_id")
 
@@ -55,6 +54,7 @@ def create_response(form_id, response_id, questions_data):
             session.add(answer)
 
         session.commit()
+        session.close()
 
         return jsonify({"message": "Responses submitted successfully"}), 200
 

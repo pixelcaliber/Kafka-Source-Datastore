@@ -1,11 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-
-DB_URL = "postgresql://postgres:12345@localhost:5432/postgres"
-engine = create_engine(DB_URL, echo=True)
 from sqlalchemy import Column, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import declarative_base, relationship
+from utils import DB_URL
 
+engine = create_engine(DB_URL, echo=True)
 Base = declarative_base()
 
 question_form_association = Table(
@@ -59,29 +58,27 @@ class Answer(Base):
 
 def create_form_template():
     # Create the PostgreSQL database engine
-
     Base.metadata.drop_all(engine)
-    # Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
 
-    # # Create a session to interact with the database
-    # session = Session(engine)
+    # Create a session to interact with the database
+    session = Session(engine)
 
-    # # Creating forms
+    # Creating forms
+    form1 = Form(title="Form 1")
+    form2 = Form(title="Form 2")
+    session.add_all([form1, form2])
+    session.commit()
+    
+    # Creating questions
+    question1 = Question(text="What's your name?")
+    question2 = Question(text="What's your age?")
+    session.add_all([question1, question2])
+    session.commit()
 
-    # form1 = Form(title="Form 1")
-    # form2 = Form(title="Form 2")
-    # session.add_all([form1, form2])
-    # session.commit()
-
-    # question1 = Question(text="What's your name?")
-    # question2 = Question(text="What's your age?")
-    # session.add_all([question1, question2])
-    # session.commit()
-
-    # # Associating questions with forms
-    # form1.questions.extend([question1, question2])
-    # form2.questions.extend([question1, question2])
-    # session.commit()
-
-    # session.close()
+    # Associating questions with forms
+    form1.questions.extend([question1, question2])
+    form2.questions.extend([question1, question2])
+    session.commit()
+    session.close()
     return f"Tables successfully created!"

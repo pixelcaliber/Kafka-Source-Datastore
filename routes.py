@@ -1,7 +1,6 @@
-# routes.py
 from flask import jsonify, request
 from database import create_form_template
-from form_orm2 import create_response
+from form_orm import create_response
 from custom_exception import FormNotFoundError, QuestionNotFoundError
 
 def health():
@@ -24,9 +23,6 @@ def route_create_response():
         return jsonify({"error": str(e)}), 400
 
     except QuestionNotFoundError as e:
-        return jsonify({"error": str(e)}), 400
-    
-    except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
     except Exception as e:
